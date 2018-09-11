@@ -1,8 +1,25 @@
 <template>
   <v-app id="inspire">
+    <v-dialog v-model="dialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Adminläge</v-card-title>
+        <v-card-text>
+          Skriv lösen för att låsa upp admin läge
+          <v-text-field v-model="passwordInput" type="password" label="Lösen" required></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" flat="flat" @click="dialog = false">Avbryt</v-btn>
+          <v-btn color="green darken-1" flat="flat" @click="unlock">Låsupp</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-content>
       <v-toolbar color="indigo" dark fixed app>
         <v-toolbar-title>Mimerslunden</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn v-if="adminUnlocked" color="primary">Lägg till betalningar</v-btn>
+        <v-btn v-if="! adminUnlocked" color="primary" @click="dialog = ! dialog">Låsupp</v-btn>
       </v-toolbar>
       <v-alert :value="! landscape" color="error" transition="fade-transition">
         Listan ses bäst om du har mobilen i liggande läge
@@ -32,6 +49,10 @@
 <script>
 export default {
   data: () => ({
+    password: "skolgatan",
+    passwordInput: "",
+    adminUnlocked: false,
+    dialog: false,
     drawer: null,
     landscape: false,
     search: "",
@@ -76,6 +97,13 @@ export default {
         this.landscape = false;
       } else {
         this.landscape = true;
+      }
+    },
+
+    unlock() {
+      if (this.passwordInput === this.password) {
+        this.adminUnlocked = true;
+        this.dialog = false;
       }
     }
   },
