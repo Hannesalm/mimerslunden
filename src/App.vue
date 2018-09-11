@@ -33,12 +33,8 @@
                 </v-flex>
                 <v-flex xs6>
                   <v-menu ref="menu" :close-on-content-click="false" v-model="menu" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                    <v-text-field slot="activator" v-model="date" label="Datum" prepend-icon="event" readonly></v-text-field>
-                    <v-date-picker v-model="date" no-title scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                    </v-date-picker>
+                    <v-text-field slot="activator" v-model="date" label="Picker without buttons" prepend-icon="event" readonly></v-text-field>
+                    <v-date-picker v-model="date" @input="$refs.menu.save(date)"></v-date-picker>
                   </v-menu>
                 </v-flex>
               </v-layout>
@@ -70,7 +66,7 @@
           <v-spacer></v-spacer>
           <v-text-field v-model="search" append-icon="search" label="Sök" single-line hide-details></v-text-field>
         </v-card-title>
-        <v-data-table :headers="headers" :items="records" :search="search" no-data-text="Finns inga rader skapade">
+        <v-data-table :headers="headers" :items="records" :search="search" no-data-text="Finns inga rader skapade" rows-per-page-text="Rader per sida" :rows-per-page-items="[10,20,50,{'text':'Alla','value':-1}]">
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
             <td class="text-xs-left">{{ props.item.address }}</td>
@@ -103,7 +99,7 @@ export default {
     addressRules: [v => !!v || "Måste finnas en adress"],
     password: "skolgatan",
     passwordInput: "",
-    adminUnlocked: true,
+    adminUnlocked: false,
     dialog: false,
     drawer: null,
     landscape: false,
