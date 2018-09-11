@@ -93,9 +93,7 @@ export default {
     list() {},
 
     applyOrientation() {
-      if (window.innerHeight > window.innerWidth) {
-        this.landscape = false;
-      } else {
+      if (window.innerHeight < window.innerWidth) {
         this.landscape = true;
       }
     },
