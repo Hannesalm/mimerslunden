@@ -14,11 +14,51 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="add" max-width="400">
+      <v-card>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-card-text>
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field v-model="address" :rules="addressRules" label="Adress" required></v-text-field>
+              </v-flex>
+            </v-layout>
+            <v-flex xs12>
+              <v-layout row wrap>
+                <v-flex xs6>
+                  <v-text-field v-model="amount" type="number" :rules="[v => !!v || 'Fyll i belopp']" label="Belopp" required></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-menu ref="menu" :close-on-content-click="false" v-model="menu" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                    <v-text-field slot="activator" v-model="date" label="Datum" prepend-icon="event" readonly></v-text-field>
+                    <v-date-picker v-model="date" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                      <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </v-flex>
+              </v-layout>
+            </v-flex>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="clear">Rensa</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="!valid" @click="submit">
+              Spara
+            </v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
     <v-content>
       <v-toolbar color="indigo" dark fixed app>
         <v-toolbar-title>Mimerslunden</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn v-if="adminUnlocked" color="primary">Lägg till betalningar</v-btn>
+        <v-btn v-if="adminUnlocked" color="primary" @click="add = ! add">Lägg till betalningar</v-btn>
         <v-btn v-if="! adminUnlocked" color="primary" @click="dialog = ! dialog">Låsupp</v-btn>
       </v-toolbar>
       <v-alert :value="! landscape" color="error" transition="fade-transition">
@@ -30,7 +70,7 @@
           <v-spacer></v-spacer>
           <v-text-field v-model="search" append-icon="search" label="Sök" single-line hide-details></v-text-field>
         </v-card-title>
-        <v-data-table :headers="headers" :items="desserts" :search="search">
+        <v-data-table :headers="headers" :items="records" :search="search" no-data-text="Finns inga rader skapade">
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
             <td class="text-xs-left">{{ props.item.address }}</td>
@@ -47,11 +87,23 @@
 </template>
 
 <script>
+import { recordRef } from "./firebase";
+
 export default {
   data: () => ({
+    menu: false,
+    date: null,
+    add: false,
+    valid: true,
+    name: "",
+    address: "",
+    amount: "",
+    nameRules: [v => !!v || "Namn måste fyllas i"],
+    email: "",
+    addressRules: [v => !!v || "Måste finnas en adress"],
     password: "skolgatan",
     passwordInput: "",
-    adminUnlocked: false,
+    adminUnlocked: true,
     dialog: false,
     drawer: null,
     landscape: false,
@@ -89,7 +141,40 @@ export default {
     source: String
   },
 
+  firebase: {
+    records: recordRef
+  },
+
   methods: {
+    submit() {
+      if (this.$refs.form.validate()) {
+        // Native form submission is not yet supported
+        recordRef
+          .push({
+            name: this.name,
+            address: this.address,
+            amount: this.amount,
+            date: this.date
+          })
+          .then(res => {
+            this.clear();
+            this.add = false;
+          });
+      }
+    },
+    clear() {
+      this.$refs.form.reset();
+    },
+
+    save() {
+      recordRef.push({
+        name: "Test",
+        address: "Skolgatan",
+        amount: 50,
+        date: "2018-01-01"
+      });
+    },
+
     list() {},
 
     applyOrientation() {
