@@ -13,7 +13,7 @@
           <v-spacer></v-spacer>
           <v-text-field v-model="search" append-icon="search" label="Sök" single-line hide-details></v-text-field>
         </v-card-title>
-        <v-data-table :headers="headers" :items="desserts" :search="search" rows-per-page-items>
+        <v-data-table :headers="headers" :items="desserts" :search="search">
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
             <td class="text-xs-left">{{ props.item.address }}</td>
