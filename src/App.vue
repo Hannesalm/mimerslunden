@@ -95,7 +95,7 @@ export default {
     }
 
     window.onresize = event => {
-      this.applyOrientation();
+      this.applyOrientation(event);
     };
   }
 };
