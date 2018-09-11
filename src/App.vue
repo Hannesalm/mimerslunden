@@ -10,12 +10,10 @@
       <v-card>
         <v-card-title class="headline">Adminläge</v-card-title>
         <v-card-text>
-          Skriv lösen för att låsa upp admin läge
           <v-text-field v-model="passwordInput" type="password" label="Lösen" required></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red darken-1" flat="flat" @click="dialog = false">Avbryt</v-btn>
           <v-btn color="green darken-1" flat="flat" @click="unlock">Låsupp</v-btn>
         </v-card-actions>
       </v-card>
@@ -39,7 +37,7 @@
                 </v-flex>
                 <v-flex xs6>
                   <v-menu ref="menu" :close-on-content-click="false" v-model="menu" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                    <v-text-field slot="activator" v-model="date" label="Picker without buttons" prepend-icon="event" readonly></v-text-field>
+                    <v-text-field slot="activator" v-model="date" label="Välj datum" prepend-icon="event" readonly></v-text-field>
                     <v-date-picker v-model="date" @input="$refs.menu.save(date)"></v-date-picker>
                   </v-menu>
                 </v-flex>
