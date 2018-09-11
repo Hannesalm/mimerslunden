@@ -109,19 +109,6 @@ export default {
   },
 
   mounted() {
-    const orientation =
-      screen.msOrientation ||
-      (screen.orientation || screen.mozOrientation || {}).type;
-
-    if (
-      orientation === "portrait-secondary" ||
-      orientation === "portrait-primary"
-    ) {
-      this.landscape = false;
-    } else {
-      this.landscape = true;
-    }
-
     window.onresize = event => {
       this.applyOrientation(event);
     };
