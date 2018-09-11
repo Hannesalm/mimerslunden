@@ -1,5 +1,11 @@
 <template>
   <v-app id="inspire">
+    <v-snackbar v-model="snackbar" :timeout="timeout" :color="color" top>
+      {{ text }}
+      <v-btn color="white" flat @click="snackbar = false">
+        Stäng
+      </v-btn>
+    </v-snackbar>
     <v-dialog v-model="dialog" max-width="290">
       <v-card>
         <v-card-title class="headline">Adminläge</v-card-title>
@@ -55,7 +61,7 @@
         <v-toolbar-title>Mimerslunden</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn v-if="adminUnlocked" color="primary" @click="add = ! add">Lägg till betalningar</v-btn>
-        <v-btn v-if="! adminUnlocked" color="primary" @click="dialog = ! dialog">Låsupp</v-btn>
+        <v-btn v-if="! adminUnlocked" color="primary" @click="dialog = ! dialog">Admin</v-btn>
       </v-toolbar>
       <v-alert :value="! landscape" color="error" transition="fade-transition">
         Listan ses bäst om du har mobilen i liggande läge
@@ -87,6 +93,10 @@ import { recordRef } from "./firebase";
 
 export default {
   data: () => ({
+    snackbar: false,
+    timeout: 3000,
+    text: "",
+    color: "green",
     menu: false,
     date: null,
     add: false,
@@ -183,6 +193,13 @@ export default {
       if (this.passwordInput === this.password) {
         this.adminUnlocked = true;
         this.dialog = false;
+        this.text = "Adminläge upplåst!";
+        this.color = "green darken-2";
+        this.snackbar = true;
+      } else {
+        this.text = "Fel lösenord";
+        this.color = "red darken-2";
+        this.snackbar = true;
       }
     }
   },
